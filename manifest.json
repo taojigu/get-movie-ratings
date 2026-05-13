@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Fetch and display movie ratings from multiple sources.",
   "permissions": ["storage", "activeTab", "scripting", "tabs"],
-  "host_permissions": ["*://*/*"],
+  "host_permissions": ["https://www.yfsp.tv/*", "https://yfsp.tv/*", "https://www.iyf.tv/*", "https://iyf.tv/*"],
   "action": {
     "default_popup": "index.html",
     "default_title": "Get Movie Ratings",
@@ -21,7 +21,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.imdb.com/*", "*://*.douban.com/*", "*://*.rottentomatoes.com/*"],
+      "matches": ["https://www.yfsp.tv/*", "https://yfsp.tv/*", "https://www.iyf.tv/*", "https://iyf.tv/*"],
       "js": ["src/content.ts"]
     }
   ],

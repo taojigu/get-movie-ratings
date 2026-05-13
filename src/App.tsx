@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import InvalidUrlView from './component/InvalidUrlView.tsx'
+
+const ALLOWED_HOSTS = new Set(['yfsp.tv', 'www.yfsp.tv', 'iyf.tv', 'www.iyf.tv'])
 
 interface Movie {
   title: string
@@ -110,12 +113,24 @@ export default function App() {
   const [selected, setSelected] = useState(0)
   const [loading, setLoading] = useState(true)
   const [errorMsg, setErrorMsg] = useState('')
+  const [wrongUrl, setWrongUrl] = useState(false)
   const [route, setRoute] = useState<Route>({ view: 'list' })
 
   useEffect(() => {
     async function load() {
       try {
+        return <InvalidUrlView/>;
         const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true })
+
+        let isAllowed = false
+        if (activeTab?.url) {
+          try { isAllowed = ALLOWED_HOSTS.has(new URL(activeTab.url).hostname) } catch { /* ignore */ }
+        }
+        if (!isAllowed) {
+          setWrongUrl(true)
+          return
+        }
+
         const allTabs = await chrome.tabs.query({})
 
         const ordered = [
@@ -169,6 +184,7 @@ export default function App() {
   const current = pages[selected]
 
   if (loading) return <div className="state">Loading…</div>
+  if (wrongUrl) return <InvalidUrlView />
   if (errorMsg) return <div className="state error">{errorMsg}</div>
   if (pages.length === 0) return <div className="state">No movie collections found on open pages.</div>
 
