@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import InvalidUrlView from './component/InvalidUrlView.tsx'
 
-const ALLOWED_HOSTS = new Set(['yfsp.tv', 'www.yfsp.tv', 'iyf.tv', 'www.iyf.tv'])
+const VALID_HOST_ARRAY = ['yfsp.tv', 'www.yfsp.tv', 'iyf.tv', 'www.iyf.tv']
+const ALLOWED_HOSTS = new Set(VALID_HOST_ARRAY)
 
 interface Movie {
   title: string
@@ -119,7 +120,6 @@ export default function App() {
   useEffect(() => {
     async function load() {
       try {
-        return <InvalidUrlView/>;
         const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true })
 
         let isAllowed = false
@@ -184,7 +184,7 @@ export default function App() {
   const current = pages[selected]
 
   if (loading) return <div className="state">Loading…</div>
-  if (wrongUrl) return <InvalidUrlView />
+  if (wrongUrl) return <InvalidUrlView urlArray={VALID_HOST_ARRAY} />
   if (errorMsg) return <div className="state error">{errorMsg}</div>
   if (pages.length === 0) return <div className="state">No movie collections found on open pages.</div>
 
